@@ -1,0 +1,29 @@
+name: Compiler le mod
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    env:
+      TZ: Europe/Paris
+    steps:
+      - uses: actions/checkout@v4
+      - name: Decompresser le projet
+        run: unzip -q boom-arrows-project.zip -d projet
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.12"
+      - name: Compiler
+        working-directory: projet/boom-arrows
+        run: gradle build --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: boom-arrows-mod
+          path: projet/boom-arrows/build/libs/boom-arrows-1.0.0.jar
